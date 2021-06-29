@@ -1,4 +1,5 @@
 #for reference https://github.com/animosity22/homescripts/blob/master/systemd/rclone.service
+#located in /etc/systemd/system/rclone.service
 
 [Unit]
 Description=Google Drive (rclone)
@@ -8,7 +9,7 @@ After=network-online.target
 
 [Service]
 Type=notify
-Environment=RCLONE_CONFIG=/opt/rclone/rclone.conf
+Environment=RCLONE_CONFIG=/home/ec2-user/.config/rclone/rclone.conf
 KillMode=none
 RestartSec=5
 ExecStart=/usr/bin/rclone mount --daemon --allow-other plexmini: /home/ec2-user/plexmedia
