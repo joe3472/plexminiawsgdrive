@@ -1,0 +1,25 @@
+#for reference https://github.com/animosity22/homescripts/blob/master/systemd/rclone.service
+
+[Unit]
+Description=Google Drive (rclone)
+AssertPathIsDirectory=/home/ec2-user/plexmedia
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+Environment=RCLONE_CONFIG=/opt/rclone/rclone.conf
+KillMode=none
+RestartSec=5
+ExecStart=/usr/bin/rclone mount --daemon --allow-other plexmini: /home/ec2-user/plexmedia
+--allow-other \
+--dir-cache-time 5000h \
+--log-file /home/ec2-user/rclonelog.txt \
+--log-level INFO \
+--poll-interval 10s \
+--user-agent rclone2electricboogaloo \
+--drive-pacer-min-sleep 10ms \
+--drive-pacer-burst 1000 \
+ExecStop=/bin/fusermount -u /home/ec2-user/plexmedia
+Restart=always
+RestartSec=10
