@@ -7,7 +7,7 @@ yum install -y fuse
 #Install Rclone
 curl https://rclone.org/install.sh | sudo bash
 
-#Install Plex Media Server. Yum does not have a configured repo for Plex so we need to create a configuration file for yum in /etc/yum.repos.d/ pointing to plex's repo. 
+#Install Plex Media Server. Yum does not have a configured repo for Plex so we need to create a config for yum in /etc/yum.repos.d/ pointing to plex's repo. Or install manually. but thats gross
 cd /etc/yum.repos.d/
 sudo nano plex.repo
 
@@ -60,17 +60,27 @@ rclone config
 #Double check your entered information and yes this is okay. 
 #Q to quit configuration and go back to terminal. 
 
-#Verify Rclone can see your drive
-rclone lsd REPLACEWITHYOURREMOTENAME:
+#Verify Rclone can see your drive. Replace "plexmini:" with your remote name, keep the : on the end. If your google drive plex media folder does not have subfolders use ls instead of lsd. 
+rclone lsd plexmini:
+#This should return your directories or if ls then whatever media files you have in your google drive plex media folder.
 
-#chmod your media folders (these are my folders that I made in my ec2-user directory, yours will be different)
-sudo chown -R ec2-user:ec2-user plexmedia
-sudo chown -R ec2-user:ec2-user plexmedia/tv
-sudo chown -R ec2-user:ec2-user plexmedia/movies
+#Add ec2-user to plex group and vice versa.
+sudo usermod -a -G ec2-user plex
+sudo usermod -a -G plex ec2-user
 
-#We need to mount google drive in Rclone and associate it with the local folders we created earlier. I chose to mount tv and movies separately. 
-rclone mount --daemon REPLACEWITHYOURREMOTENAME: /REPLACEWITHYOURMEDIAFOLDERS/
+#check with groups
+groups ec2-user
+groups plex
+#You should see you as a plex user and plex as an ec2-user. 
 
+#chmod your media folder(s). I made a single plexmedia folder for everything. Yours can/will be different
+sudo chmod 755 plexmedia
+
+#We need to mount google drive in Rclone and associate it with whatever your local media folder is. 
+rclone mount --daemon --allow-other plexmini: /home/ec2-user/plexmedia
+
+#Rclone error logging on mount attempt. This helped me figure out why everything was not working if it was not. 
+rclone mount --daemon --allow-other plexmini: /home/ec2-user/plexmedia --log-file=/home/ec2-user/rclonelog.txt --log-level INFO
 
 
 
