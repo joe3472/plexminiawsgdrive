@@ -24,22 +24,22 @@ token = {"access_token":"xxxxxxxxxx"}
 EOF
 
 cat <<EOF >> /etc/rc.local
-rclone mount onedrive:Filmez /data/media/movies/ --read-only --uid 1000 --gid 1000 --allow-other --daemon
-rclone mount onedrive:"TV Series" /data/media/tv/ --read-only --uid 1000 --gid 1000 --allow-other --daemon
+rclone mount drive:movies /plexmedia/movies/ --read-only --uid 1000 --gid 1000 --allow-other --daemon
+rclone mount drive:"TV Series" /plexmedia/tv/ --read-only --uid 1000 --gid 1000 --allow-other --daemon
 EOF
 
 # Creating plex+tautulli container
 
 usermod -a -G docker ec2-user
-mkdir -p /data/plex ; mkdir -p /data/media/tv ; mkdir -p /data/media/movies
-chown -R ec2-user:ec2-user /data/media/ ; chown -R ec2-user:ec2-user /data/plex/
-mkdir /data/tautulli ; chown ec2-user:ec2-user /data/tautulli
+mkdir -p /plexmedia ; mkdir -p /plexmedia/tv/ ; mkdir -p /plexmedia/movies/
+chown -R ec2-user:ec2-user /plexmedia/ ; chown -R ec2-user:ec2-user /plexmedia/
+mkdir /data/tautulli ; chown ec2-user:ec2-user /plexmedia/tautulli
 systemctl enable docker ; service docker start
 
 docker create \
---name=plex --net=host -e VERSION=latest \
+--name=plex3 --net=host -e VERSION=latest \
 -e PUID=$(id -u ec2-user) -e PGID=$(id -g ec2-user) \
--v /data/plex:/config -v /data/media/tv:/data/tvshows -v /data/media/movies:/data/movies \
+-v /home/ec2-user/plexmedia/plex:/config -v /home/ec2-user/plexmedia/tv -v /home/ec2-user/plexmedia/movies \
 --restart unless-stopped linuxserver/plex
 docker start plex
 
@@ -47,7 +47,7 @@ docker create \
 --name=tautulli \
 -e PUID=$(id -u ec2-user) -e PGID=$(id -g ec2-user) \
 -p 8181:8181 \
--v /data/tautulli:/config \
+-v /plexmedia/tautulli:/config \
 -v /data/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs \
 --restart unless-stopped linuxserver/tautulli
 docker start tautulli
