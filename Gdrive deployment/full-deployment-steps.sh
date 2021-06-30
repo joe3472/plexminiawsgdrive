@@ -80,7 +80,7 @@ sudo chmod 755 plexmedia
 rclone mount --daemon --allow-other plexmini: /home/ec2-user/plexmedia
 
 #Rclone error logging on mount attempt. This helped me figure out why everything was not working if it was not. 
-rclone mount --daemon --allow-other plexmini: /home/ec2-user/plexmedia --log-file=/home/ec2-user/rclonelog.txt --log-level INFO
+rclone mount --daemon --allow-other plexmini: /home/ec2-user/plexmedia --log-file=/home/ec2-user/rclonelog.log --log-level INFO
 
 
 
