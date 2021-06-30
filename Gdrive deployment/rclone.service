@@ -1,26 +1,24 @@
-#for reference https://github.com/animosity22/homescripts/blob/master/systemd/rclone.service
+#for reference https://github.com/animosity22/homescripts/blob/master/systemd/rclone.service < this service.conf is based on an older version and I had many issues getting it working. 
 #located in /etc/systemd/system/rclone.service
 
 [Unit]
-Description=Google Drive (rclone)
-AssertPathIsDirectory=/home/ec2-user/plexmedia
-Wants=network-online.target
+Description=RClone Service
 After=network-online.target
 
 [Service]
 Type=notify
-Environment=RCLONE_CONFIG=/home/ec2-user/.config/rclone/rclone.conf
 KillMode=none
 RestartSec=5
-ExecStart=/usr/bin/rclone mount --daemon --allow-other plexmini: /home/ec2-user/plexmedia
+ExecStart=/usr/bin/rclone mount plexmini: /home/ec2-user/plexmedia \
 --allow-other \
---dir-cache-time 5000h \
---log-file /home/ec2-user/rclonelog.txt \
---log-level INFO \
---poll-interval 10s \
---user-agent rclone2electricboogaloo \
---drive-pacer-min-sleep 10ms \
---drive-pacer-burst 1000 \
-ExecStop=/bin/fusermount -u /home/ec2-user/plexmedia
-Restart=always
-RestartSec=10
+--allow-non-empty \
+--dir-cache-time 1000h \
+--log-file=/home/ec2-user/rclonelog.log \
+--log-level INFO
+ExecStop=/bin/fusermount -uz /home/ec2-user/plexmedia
+Restart=on-failure
+User=ec2-user
+Group=ec2-user
+
+[Install]
+WantedBy=multi-user.target
