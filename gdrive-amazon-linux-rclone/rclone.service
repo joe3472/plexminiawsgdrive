@@ -1,5 +1,4 @@
-#for reference https://github.com/animosity22/homescripts/blob/master/systemd/rclone.service < this service.conf is based on an older version and I had many issues getting it working. 
-#located in /etc/systemd/system/rclone.service
+#located in /etc/systemd/system/rclone.service. Sets rclone to boot at startup and mount /home/ec2-user/plexmedia to remote named plexmini:
 
 [Unit]
 Description=RClone Service

@@ -1,3 +1,4 @@
+#!/bin/bash
 #Install amazon linux essentials
 amazon-linux-extras install epel
 
@@ -12,12 +13,14 @@ cd /etc/yum.repos.d/
 sudo nano plex.repo
 
 #Provision the plex.repo file with the following configuration information and write to disk: 
-#[PlexRepo]
-#name=PlexRepo
-#baseurl=https://downloads.plex.tv/repo/rpm/$basearch/
-#enabled=1
-#gpgkey=https://downloads.plex.tv/plex-keys/PlexSign.key
-#gpgcheck=1
+cat <<EOF >> /etc/yum.repos.d/plex.repo
+[PlexRepo]
+name=PlexRepo
+baseurl=https://downloads.plex.tv/repo/rpm/$basearch/
+enabled=1
+gpgkey=https://downloads.plex.tv/plex-keys/PlexSign.key
+gpgcheck=1
+EOF
 
 #Install Plex Media Server
 sudo yum install -y plexmediaserver
